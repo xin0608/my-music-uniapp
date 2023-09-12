@@ -7,5 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "uni-ajax": "^2.5.1",
+    "uview-ui": "^2.0.31"
+  }
 }

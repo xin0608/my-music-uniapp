@@ -1,7 +1,10 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/my/my"
+    "pages/my/my",
+    "pages/play/play",
+    "pages/songList/recoSongList",
+    "pages/search/search"
   ],
   "subPackages": [],
   "window": {

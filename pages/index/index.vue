@@ -1,18 +1,23 @@
 <template>
 	<view class="index-page">
 		<view class="content-box">
-			<!-- 搜索栏 start -->
-
-			<!-- 搜索栏 end -->
+			<view class="search-box" @click="toLink('/pages/search/search')">
+				<u-search placeholder="搜索" v-model="keyword" :show-action="false"></u-search>
+			</view>
 
 			<!-- 推荐歌单 start -->
 			<!-- 最多只显示6个 ，最后一个显示查看更多-->
 			<view class="list-box">
 				<view class="title">推荐歌单</view>
-				<view class="list-items-box">
+				<!-- 缺省图 -->
+				<view class="empty-img-box" v-if="!recommendedSongList.length">
+					<image class="empty" src="../../static/index/empty2.png"></image>
+					<view>服务器出问题啦，请稍后再试๑ŐεŐ๑</view>
+				</view>
+				<view class="list-items-box" v-else>
 					<view class="list-item" v-for="(item,index) in recommendedSongList" :key="index">
-						<image class="song-img" :src="item.songImg"></image>
-						<view class="song-name">{{stringSlice(item.songName,10)}}</view>
+						<image class="song-img" :src="item.picUrl"></image>
+						<view class="song-name">{{stringSlice(item.name,24)}}</view>
 					</view>
 					<view class="list-item more" v-if="showMore">
 						<image class="more-icon" src="@/static/index/more.png"></image>
@@ -25,10 +30,16 @@
 			<!-- 最新音乐 start -->
 			<view class="list-box">
 				<view class="title">最新音乐</view>
-				<view class="latest-music" v-for="item in latestMusic" :key="item.id">
+				<!-- 缺省图 -->
+				<view class="empty-img-box" v-if="!latestMusic.length">
+					<image class="empty" src="../../static/index/empty2.png"></image>
+					<view>服务器出问题啦，请稍后再试๑ŐεŐ๑</view>
+				</view>
+				<view v-else class="latest-music" v-for="item in latestMusic" :key="item.id"
+					@click="toLink('/pages/play/play?id='+item.id)">
 					<view class="song-info">
-						<view class="song-name">{{item.songName}}</view>
-						<view class="singer">{{item.singer}}</view>
+						<view class="song-name">{{item.name}}</view>
+						<view class="singer">{{item.song.artists[0].name}}</view>
 					</view>
 					<image class="play-btn" src="@/static/index/play.png"></image>
 				</view>
@@ -50,58 +61,14 @@
 		data() {
 			return {
 				showMore: false, //推荐歌单是否展示“更多”
-				recommendedSongList: [{
-						id: 1,
-						songImg: '/static/index/album1.jpg',
-						songName: '这是我最爱的小情歌'
-					}, {
-						id: 2,
-						songImg: '/static/index/album3.jpg',
-						songName: '你永远不懂我快乐'
-					}, {
-						id: 3,
-						songImg: '/static/index/album2.jpeg',
-						songName: '啦啦啦啦啦啦啦'
-					},
-					{
-						id: 4,
-						songImg: '/static/index/album3.jpg',
-						songName: '这是我最爱的小情歌'
-					}, {
-						id: 5,
-						songImg: '/static/index/album2.jpeg',
-						songName: '你永远不懂我快乐'
-					}, {
-						id: 6,
-						songImg: '/static/index/album1.jpg',
-						songName: '啦啦啦啦啦啦啦'
-					},
-					{
-						id: 7,
-						songImg: '/static/index/album3.jpg',
-						songName: '你永远不懂我快乐'
-					},
-				],
-				latestMusic: [{
-						id: 1,
-						songName: '这是我最爱的小情歌',
-						singer: 'me',
-					},
-					{
-						id: 2,
-						songName: '你永远不懂我快乐',
-						singer: 'me',
-					},
-					{
-						id: 3,
-						songName: '啦啦啦啦啦啦啦',
-						singer: 'me',
-					},
-				]
+				recommendedSongList: [],
+				latestMusic: [],
+				keyword: ''
 			}
 		},
 		onLoad() {
-			this.handleReplaceMore()
+			this.getRecommendList()
+			this.getLatestMusic()
 		},
 		methods: {
 			// 处理推荐歌单数量过多渲染问题
@@ -110,22 +77,43 @@
 				const len = this.recommendedSongList.length
 				this.recommendedSongList.splice(5)
 				this.showMore = true
-
-			}
+			},
+			// 获取推荐歌单列表
+			getRecommendList() {
+				this.$ajax.get('/personalized', {
+					limit: 6
+				}).then(res => {
+					this.recommendedSongList = res.data.result
+					this.handleReplaceMore()
+				})
+			},
+			// 获取最新音乐列表
+			getLatestMusic() {
+				this.$ajax.get('/personalized/newsong', {
+					limit: 20
+				}).then(res => {
+					this.latestMusic = res.data.result
+				})
+			},
 		}
+
 	}
 </script>
 
 <style lang="scss" scoped>
 	.index-page {
+		height: 100%;
 		padding: 0 20rpx;
-		height: 100vh;
 		background: #F4F6F9;
 
 		.content-box {
+			height: 100vh;
 			padding-bottom: 120rpx;
 			overflow-y: scroll;
 
+			.search-box {
+				margin: 20rpx 0;
+			}
 
 			.list-box {
 				width: 100%;
@@ -136,7 +124,11 @@
 					font-size: 34rpx;
 					font-weight: bold;
 					margin-bottom: 20rpx;
+					border-left: 10rpx solid #5aa2dc;
+					padding-left: 18rpx;
 				}
+
+
 
 				.list-items-box {
 					width: 100%;
@@ -148,7 +140,7 @@
 
 					.list-item {
 						width: 30%;
-						height: 236rpx;
+						height: 280rpx;
 						background-color: #fff;
 						display: flex;
 						flex-direction: column;
@@ -182,7 +174,7 @@
 
 						.song-name {
 							padding: 10rpx 20rpx;
-							font-size: 28rpx;
+							font-size: 22rpx;
 							color: #333333;
 							// font-weight: bold;
 						}
@@ -190,13 +182,13 @@
 				}
 
 				.latest-music {
-					padding: 32rpx;
+					padding: 18rpx;
 					margin-bottom: 24rpx;
 					display: flex;
 					align-items: center;
 					justify-content: space-between;
 					border-radius: 16rpx;
-					background-color: #fff;
+					// background-color: #fff;
 
 					.song-info {
 						.song-name {
@@ -216,6 +208,21 @@
 					}
 				}
 			}
+		}
+	}
+
+	.empty-img-box {
+		width: 100%;
+		height: 400rpx;
+		background-color: #fff;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+
+		.empty {
+			width: 100rpx;
+			height: 100rpx;
 		}
 	}
 </style>
