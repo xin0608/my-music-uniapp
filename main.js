@@ -1,5 +1,8 @@
 import App from './App'
 import './common/mixins.js'
+import './common/utils/request.js'
+import uView from 'uview-ui';
+Vue.use(uView);
 // #ifndef VUE3
 import Vue from 'vue'
 import './uni.promisify.adaptor'

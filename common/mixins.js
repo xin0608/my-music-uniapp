@@ -1,6 +1,6 @@
 import Vue from "vue";
 Vue.mixin({
-	methods:{
+	methods: {
 		/**
 		 * 截取字符串超出显示省略号
 		 * @param {String} str 截取字符串
@@ -28,6 +28,28 @@ Vue.mixin({
 				return "";
 			}
 		},
-		
+		// 简单页面跳转
+		toLink(url, opts = {}) {
+			let options = opts;
+			options.url = url
+			uni.navigateTo(options)
+		},
+		// 不足两位数补零
+		zeroFill(val) {
+			return val >= 10 ? val : '0'+val 
+		},
+		// 时间戳格式化
+		getDateTime(val) {
+			let time = new Date(val)
+			let year = time.getFullYear()
+			let month = time.getMonth() + 1
+			let date = time.getDate()
+			let hour = time.getHours()
+			let min = time.getMinutes()
+			let seconds = time.getSeconds()
+			return year + '-' + this.zeroFill(month) + '-' + this.zeroFill(date) + ' ' + this.zeroFill(hour) +
+				':' + this.zeroFill(min) + ':' + this.zeroFill(seconds)
+
+		}
 	}
 })
