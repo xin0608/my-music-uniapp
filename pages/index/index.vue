@@ -2,9 +2,9 @@
 	<view class="index-page">
 		<view class="content-box">
 			<view class="search-box" @click="toLink('/pages/search/search')">
-				<u-search placeholder="搜索" v-model="keyword" :show-action="false"></u-search>
+				<uni-search-bar placeholder="搜索"  v-model="keyword" cancelButton="none"  :radius="20">
+				</uni-search-bar>
 			</view>
-
 			<!-- 推荐歌单 start -->
 			<!-- 最多只显示6个 ，最后一个显示查看更多-->
 			<view class="list-box">
@@ -20,7 +20,7 @@
 						<view class="song-name">{{stringSlice(item.name,24)}}</view>
 					</view>
 					<view class="list-item more" v-if="showMore">
-						<image class="more-icon" src="@/static/index/more.png"></image>
+						<u-icon class="more-icon" name="grid-fill" color="#2979ff" size="28"></u-icon>
 						<view>查看更多</view>
 					</view>
 				</view>
