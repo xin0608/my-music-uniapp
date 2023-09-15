@@ -28,9 +28,10 @@
 			}
 
 		}, {
-			"path": "pages/songList/recoSongList",
+			"path": "pages/songList/songSheetDetail",
 			"style": {
-				"navigationBarTitleText": "推荐歌单",
+				"navigationBarTitleText": "",
+				"navigationStyle": "custom",
 				"enablePullDownRefresh": false
 			}
 
@@ -42,7 +43,16 @@
 			}
 
 		}
-	],
+	    ,{
+            "path" : "pages/songList/songSheetList",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "更多歌单",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+    ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",

@@ -34,6 +34,16 @@ Vue.mixin({
 			options.url = url
 			uni.navigateTo(options)
 		},
+		// 返回
+		backRoute(delta = 1, opts = {}) {
+			const pages = getCurrentPages()
+			console.log(pages)
+			let options = opts;
+			options.delta = delta
+			console.log('数据返回', options)
+			uni.navigateBack(options)
+			console.log('数据返回结束')
+		},
 		// 不足两位数补零
 		zeroFill(val) {
 			return val >= 10 ? val : '0'+val 

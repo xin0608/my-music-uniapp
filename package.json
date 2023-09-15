@@ -10,6 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "@dcloudio/uni-ui": "^1.4.28",
+    "colorthief": "^2.4.0",
+    "miniapp-color-thief": "^1.0.5",
     "uni-ajax": "^2.5.1",
     "uview-ui": "^2.0.31"
   }

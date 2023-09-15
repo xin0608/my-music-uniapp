@@ -38,7 +38,7 @@
 		</view>
 		<!-- 菜单栏 -->
 		<view class="menu">
-			<image class="more" src="../../static/play/more.png" @click="handleShowMore"></image>
+			<image class="more" src="../../static/play/comment.png" @click="handleShowMore"></image>
 		</view>
 		<!-- 遮罩层 -->
 		<view class="mask" v-if="showMore" @click="showMore=false">
