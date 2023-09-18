@@ -4,7 +4,8 @@
 			<view class="list-item" v-for="item in songSheetList" :key="item.id"
 				@click="toLink('/pages/songList/songSheetDetail?id='+item.id)">
 				<image class="song-img" :src="item.coverImgUrl"></image>
-				<view class="song-name">{{stringSlice(item.description,24)}}</view>
+				<image class="play-btn" src="@/static/play/click-to-play.png"></image>
+				<view class="song-name">{{stringSlice(item.name,24)}}</view>
 			</view>
 
 		</view>
@@ -45,6 +46,7 @@
 			font-size: 24rpx;
 
 			.list-item {
+				position: relative;
 				width: 30%;
 				height: 280rpx;
 				background-color: #fff;
@@ -77,12 +79,18 @@
 					border-radius: 16rpx 16rpx 0 0;
 
 				}
+				.play-btn {
+					width: 50rpx;
+					height: 50rpx;
+					position: absolute;
+					top: 146rpx;
+					left: 0;
+				}
 
 				.song-name {
 					padding: 10rpx 20rpx;
 					font-size: 22rpx;
 					color: #333333;
-					// font-weight: bold;
 				}
 			}
 
