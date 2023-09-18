@@ -3,6 +3,9 @@
 #### 介绍
 轻便快捷无广的音乐小程序
 
+#### 项目展示
+https://github.com/xin0608/my-music-uniapp/assets/104176827/a704665b-ba40-46e4-8650-1e92bbaefdde
+
 #### 软件架构
 软件架构说明
 
