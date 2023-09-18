@@ -4,7 +4,7 @@
 轻便快捷无广的音乐小程序
 
 #### 项目展示
-https://github.com/xin0608/my-music-uniapp/assets/104176827/a704665b-ba40-46e4-8650-1e92bbaefdde
+https://github.com/xin0608/my-music-uniapp/assets/104176827/0cc7967b-afb0-4b5f-952c-b59bd6619798
 
 #### 软件架构
 软件架构说明
