@@ -2,9 +2,9 @@
 	<view class="index-page">
 		<view class="content-box">
 			<view class="search-box" @click="toLink('/pages/search/search')">
-				<u-search placeholder="搜索" v-model="keyword" :show-action="false"></u-search>
+				<uni-search-bar placeholder="搜索" v-model="keyword" cancelButton="none" bgColor="#fff" :radius="20">
+				</uni-search-bar>
 			</view>
-
 			<!-- 推荐歌单 start -->
 			<!-- 最多只显示6个 ，最后一个显示查看更多-->
 			<view class="list-box">
@@ -15,17 +15,20 @@
 					<view>服务器出问题啦，请稍后再试๑ŐεŐ๑</view>
 				</view>
 				<view class="list-items-box" v-else>
-					<view class="list-item" v-for="(item,index) in recommendedSongList" :key="index">
+					<view class="list-item" v-for="item in recommendedSongList" :key="item.id"
+						@click="toLink('/pages/songList/songSheetDetail?id='+item.id)">
 						<image class="song-img" :src="item.picUrl"></image>
+						<image class="play-btn" src="@/static/play/click-to-play.png"></image>
 						<view class="song-name">{{stringSlice(item.name,24)}}</view>
 					</view>
-					<view class="list-item more" v-if="showMore">
+					<view class="list-item more" v-if="showMore" @click="toLink('/pages/songList/songSheetList')">
 						<image class="more-icon" src="@/static/index/more.png"></image>
 						<view>查看更多</view>
 					</view>
 				</view>
 			</view>
 			<!-- 推荐歌单 end -->
+
 
 			<!-- 最新音乐 start -->
 			<view class="list-box">
@@ -111,10 +114,6 @@
 			padding-bottom: 120rpx;
 			overflow-y: scroll;
 
-			.search-box {
-				margin: 20rpx 0;
-			}
-
 			.list-box {
 				width: 100%;
 				margin-bottom: 20rpx;
@@ -139,6 +138,7 @@
 					font-size: 24rpx;
 
 					.list-item {
+						position: relative;
 						width: 30%;
 						height: 280rpx;
 						background-color: #fff;
@@ -171,7 +171,14 @@
 							border-radius: 16rpx 16rpx 0 0;
 
 						}
-
+						
+						.play-btn {
+							width: 50rpx;
+							height: 50rpx;
+							position: absolute;
+							top: 146rpx;
+							left: 0;
+						}
 						.song-name {
 							padding: 10rpx 20rpx;
 							font-size: 22rpx;

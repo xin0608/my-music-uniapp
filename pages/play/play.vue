@@ -1,31 +1,31 @@
 <template>
 	<view class="play-page">
 		<!-- 模糊背景 -->
-		<image class="song-bg" :src=" (songInfo && songInfo.al && songInfo.al.picUrl)
-		      +'?imageView&thumbnail=360y360&quality=75&tostatic=0'"></image>
+		<image class="song-bg"
+			:src=" (songInfo && songInfo.al && songInfo.al.picUrl)+'?imageView&thumbnail=360y360&quality=75&tostatic=0'">
+		</image>
 
 		<!-- 留声机 容器-->
 		<view class="song-wrapper">
 			<!-- 留声机本身 css做动画-->
-			<image src="../../static/play/bg.png" class="song-turn ani"
-				:style="'animation-play-state:'+(playState ? 'running' : 'paused')">
+			<view :class="{'song-pause':true,'song-play':playState}">
 				<view class="song-img">
-					<image style="width: 100%" :src="(
-					              songInfo && songInfo.al && songInfo.al.picUrl
-					            )+'?imageView&thumbnail=360y360&quality=75&tostatic=0'"></image>
+					<image style="width: 100%"
+						:src="(songInfo && songInfo.al && songInfo.al.picUrl)+'?imageView&thumbnail=360y360&quality=75&tostatic=0'">
+					</image>
 				</view>
-			</image>
+			</view>
 			<!-- 播放按钮 -->
-			<view class="start-box" @click="audioStart">
-				<image src="../../static/play/start.png" class="song-start" v-show="!playState"></image>
+			<view class="start-box" @click="handlePlay">
+				<image src="../../static/play/click-to-play.png" class="play-or-pasue-icon" v-show="!playState"></image>
+				<image src="../../static/play/click-to-pause.png" class="play-or-pasue-icon" v-show="playState"></image>
 			</view>
 			<!-- 播放歌词 容器 -->
 			<view class="song-msg">
 				<!-- 歌曲名 -->
 				<view class="m-song-h2">
-					<view class="m-song-sname">{{ songInfo.name }}-{{
-			              songInfo && songInfo.ar && songInfo.ar[0].name
-			            }}</view>
+					<view class="m-song-sname">{{songInfo.name}}-{{songInfo && songInfo.ar && songInfo.ar[0].name}}
+					</view>
 				</view>
 				<!-- 歌词部分-随着时间切换展示一句歌词 -->
 				<view class="lrcContent">
@@ -33,56 +33,59 @@
 				</view>
 			</view>
 			<!-- 留声机 唱臂 -->
-			<image src="../../static/play/needle-ab.png" class="needle" :style="'transform: rotate'+needleDeg"></image>
+			<image src="../../static/play/needle-ab.png" class="needle" :style="'transform: rotate('+needleDeg+')'">
+			</image>
 		</view>
-		<audio @timeupdate="showLyric" :src="'https://music.163.com/song/media/outer/url?id='+id+'.mp3'"></audio>
 		<!-- 菜单栏 -->
 		<view class="menu">
-			<image class="more" src="../../static/play/more.png" @click="handleShowMore"></image>
+			<image class="more" src="../../static/play/comment.png" @click="handleShowMore"></image>
 		</view>
-		<!-- 评论区 上拉 -->
-		<view class="comment-box" v-if="showMore">
-			<view class="header">
-				<view class="title">评论区</view>
-				<image @click="showMore=false" class="close-icon" src="../../static/close.png"></image>
-			</view>
-			<view class="scroll-box">
-				<!-- 缺省图 -->
-				<view v-if="!commentList.length" class="empty-box">
-					<image  class="empty" mode="widthFix"
-						src="../../static/play/comment-empty.png"></image>
-					<view>暂无评论，快来评论吧๑ŐεŐ๑</view>
+		<!-- 遮罩层 -->
+		<view class="mask" v-if="showMore" @click="showMore=false">
+			<!-- 评论区 上拉 -->
+			<view class="comment-box" @click.stop="()=>{}">
+				<view class="header">
+					<view class="title">评论数 {{totalNum}}</view>
+					<image @click="showMore=false" class="close-icon" src="../../static/close.png"></image>
 				</view>
+				<scroll-view class="scroll-box" scroll-y @scrolltolower="handleScrolltolower">
+					<!-- 缺省图 -->
+					<view v-if="!commentList.length" class="empty-box">
+						<image class="empty" mode="widthFix" src="../../static/play/comment-empty.png"></image>
+						<view>暂无评论，快来评论吧๑ŐεŐ๑</view>
+					</view>
 
-				<view v-else class="comment-items" v-for="item in commentList" :key="item.id">
-					<image :src="item.user.avatarUrl" class="head-sculpture" mode="aspectFill"></image>
-					<view class="comment-info">
-						<view class="nickname">{{item.user.nickname}}</view>
-						<view class="comment">
-							{{item.content}}
-						</view>
-						<view class="time-and-like">
-							<view class="time">{{getDateTime(item.time)}}</view>
-							<view class="like">
-								<image class="like-icon" src="../../static/play/like.png"></image>
-								<view class="like-num">{{item.likedCount}}</view>
+					<view v-else class="comment-items" v-for="item in commentList" :key="item.id">
+						<image :src="item.user.avatarUrl" class="head-sculpture" mode="aspectFill"></image>
+						<view class="comment-info">
+							<view class="nickname">{{item.user.nickname}}</view>
+							<view class="comment">
+								{{item.content}}
+							</view>
+							<view class="time-and-like">
+								<view class="time">{{getDateTime(item.time)}}</view>
+								<view class="like">
+									<image class="like-icon" src="../../static/play/like.png"></image>
+									<view class="like-num">{{item.likedCount}}</view>
+								</view>
 							</view>
 						</view>
 					</view>
+				</scroll-view>
+				<!-- 评论输入框 -->
+				<view class="search-box">
+					<u-search search-icon="edit-pen" placeholder="评论一句" v-model="keyword" action-text="发送"></u-search>
 				</view>
-			</view>
-			<!-- 评论输入框 -->
-			<view class="search-box">
-				<u-search search-icon="edit-pen" placeholder="评论一句" v-model="keyword" action-text="发送"></u-search>
 			</view>
 		</view>
 	</view>
 </template>
 <script>
+	const audioContext = uni.createInnerAudioContext()
 	export default {
 		data() {
 			return {
-				playState: false, // 音乐播放状态(true暂停, false播放)
+				playState: false, // 音乐播放状态(true正在播放, false暂停中)
 				id: '', // 上一页传过来的音乐id
 				songInfo: {}, // 歌曲信息
 				lyric: {}, // 歌词枚举对象(需要在js拿到歌词写代码处理后, 按照格式保存到这个对象)
@@ -90,7 +93,14 @@
 				lastLy: "", // 记录当前播放歌词
 				showMore: false,
 				commentList: [],
-				keyword:''
+				keyword: '',
+				currenttime: 0,
+				// 数据分页
+				pageNo: 1,
+				pageSize: 20,
+				totalNum: 0,
+				time: Date.now(),
+				hasMoreToLoading: false,
 			}
 
 		},
@@ -99,18 +109,30 @@
 				// 留声机-唱臂的位置属性
 				return this.playState ? "-7deg" : "-38deg";
 			},
+
 		},
 		onLoad(options) {
 			this.id = options.id
 			this.getSong()
-			// this.showLyric();
+			this.showLyric();
+			this.getCommentList()
 		},
 		methods: {
+			handlePlay() {
+				this.playState = !this.playState
+				if (this.playState) {
+					audioContext.src = 'https://music.163.com/song/media/outer/url?id=' + this.id + '.mp3'
+					audioContext.volume = 0.5
+					audioContext.play()
+				} else {
+					audioContext.pause()
+					this.currenttime = audioContext.currentTime
+				}
+				this.showLyric()
+			},
 			getSong() {
 				this.$ajax.get('/song/detail?ids=' + this.id).then(res => {
-					// console.log("res:", res)
 					this.songInfo = res.data.songs[0];
-
 				})
 				this.$ajax.get('/lyric?id=' + this.id).then(res => {
 					const lyrContent = res
@@ -139,46 +161,46 @@
 					// 秒数作为key, 对应歌词作为value
 					lyricObj[ms + Number(ss)] = contentArr[index];
 				});
-				// 返回得到的歌词对象(可以打印看看)
-				//   console.log(lyricObj);
 				return lyricObj;
 			},
-			audioStart() {
-				// 播放按钮 - 点击事件
-				if (!this.playState) {
-					// 如果状态为false
-
-					this.$refs.audio.play(); // 调用audio标签的内置方法play可以继续播放声音
-				} else {
-					this.$refs.audio.pause(); // 暂停audio的播放
-				}
-				this.playState = !this.playState; // 点击设置对立状态
-			},
 			showLyric() {
-				// 监听播放audio进度, 切换歌词显示
-				// this.$refs.audio.addEventListener("timeupdate", () => {
-				let curTime = Math.floor(this.$refs.audio.currentTime);
-				// 避免空白出现
-				if (this.lyric[curTime]) {
-					this.curLyric = this.lyric[curTime];
-					this.lastLy = this.curLyric;
-				} else {
-					this.curLyric = this.lastLy;
-				}
-				// });
+				audioContext.onTimeUpdate(() => {
+					let curTime = Math.floor(audioContext.currentTime);
+					// 避免空白出现
+					if (this.lyric[curTime]) {
+						this.curLyric = this.lyric[curTime];
+						this.lastLy = this.curLyric;
+					} else {
+						this.curLyric = this.lastLy;
+					}
+
+				})
+
 			},
 			handleShowMore() {
 				this.showMore = !this.showMore
+			},
+			// 列表滚动到底部时触发处理函数
+			handleScrolltolower(e) {
+				if (!this.hasMoreToLoading) return
+				// 加载下一页
+				this.pageNo += 1
 				this.getCommentList()
 			},
 			// 获取评论列表
 			getCommentList() {
-				this.$ajax.get('/comment/new?type=0&sortType=3&pageSize=20', {
+				this.$ajax.get('/comment/new?type=0&sortType=3', {
 					id: this.id,
-					// pageNo: this.pageNo,
-					cursor: Date.now(),
+					pageNo: this.pageNo,
+					pageSize: this.pageSize,
+					cursor: this.time,
 				}).then(res => {
-					this.commentList = res.data.data.comments
+					const newList = res.data.data.comments;
+					// 记住上一个请求的最后一个数据
+					this.time = newList[newList.length - 1].time;
+					this.hasMoreToLoading = res.data.data.hasMore
+					this.totalNum = res.data.data.totalCount
+					this.commentList.push(...newList)
 				})
 
 			}
@@ -188,7 +210,6 @@
 <style scoped lang="scss">
 	.song-bg {
 		width: 100vw;
-		// height: 100vh;
 		height: 100%;
 		position: fixed;
 		left: 0;
@@ -197,8 +218,8 @@
 		overflow: hidden;
 		z-index: 1;
 		opacity: 1;
-		filter: blur(25px);
 		/*模糊背景 */
+		filter: blur(25px);
 	}
 
 	.song-bg::before {
@@ -219,15 +240,35 @@
 		left: 50%;
 		top: 50px;
 		transform: translateX(-50%);
-		z-index: 10001;
+		z-index: 2;
 	}
 
-	.song-turn {
+	.song-pause {
 		width: 100%;
 		height: 100%;
-		// background: url("./img/bg.png") no-repeat;
+		background: url('../../static/play/bg.png') no-repeat;
 		background-size: 100%;
 	}
+
+	.song-play {
+		animation: headRotate 6s linear infinite;
+	}
+
+	/* 头像旋转效果  */
+	@keyframes headRotate {
+		0% {
+			transform: rotate(0deg);
+		}
+
+		50% {
+			transform: rotate(180deg);
+		}
+
+		100% {
+			transform: rotate(360deg);
+		}
+	}
+
 
 	.start-box {
 		position: absolute;
@@ -242,16 +283,14 @@
 		align-items: center;
 	}
 
-	.song-start {
+	.play-or-pasue-icon {
 		width: 56px;
 		height: 56px;
-
 	}
 
 	.needle {
 		position: absolute;
 		transform-origin: left top;
-
 		width: 73px;
 		height: 118px;
 		top: -40px;
@@ -290,29 +329,6 @@
 		text-align: center;
 	}
 
-	.left-incon {
-		position: absolute;
-		top: 10px;
-		left: 10px;
-		font-size: 24px;
-		z-index: 10001;
-		color: #fff;
-	}
-
-	.ani {
-		animation: turn 5s linear infinite;
-	}
-
-	@keyframes turn {
-		0% {
-			-webkit-transform: rotate(0deg);
-		}
-
-		100% {
-			-webkit-transform: rotate(360deg);
-		}
-	}
-
 	.menu {
 		position: fixed;
 		width: 100vw;
@@ -321,15 +337,21 @@
 		bottom: 0;
 		display: flex;
 		align-items: center;
-		// justify-content: flex-end;
 		padding: 0 20rpx;
-		z-index: 9999999;
+		z-index: 3;
 
 		.more {
 			width: 50rpx;
 			height: 50rpx;
 
 		}
+	}
+
+	.mask {
+		width: 100vw;
+		height: 100vh;
+		position: fixed;
+		z-index: 4;
 	}
 
 	.comment-box {
@@ -339,14 +361,13 @@
 		width: 100vw;
 		height: 75vh;
 		border-radius: 20rpx 20rpx 0 0;
-		z-index: 999999999999;
+		z-index: 5;
 
 		.header {
-			width: 100%;
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			padding: 20rpx;
+			padding: 32rpx 20rpx;
 
 			.title {
 				font-size: 24rpx;
@@ -354,7 +375,7 @@
 
 			.close-icon {
 				position: absolute;
-				right: 0;
+				right: 20rpx;
 				width: 50rpx;
 				height: 50rpx;
 			}
@@ -362,9 +383,8 @@
 
 		.scroll-box {
 			height: 80%;
-			margin-bottom: 20rpx;
-			overflow-y: scroll;
-			.empty-box{
+
+			.empty-box {
 				width: 100%;
 				height: 100%;
 				display: flex;
@@ -372,11 +392,12 @@
 				align-items: center;
 				justify-content: center;
 				font-size: 24rpx;
+
 				.empty {
 					width: 200rpx;
 				}
 			}
-			
+
 
 			.comment-items {
 				display: flex;
@@ -421,8 +442,9 @@
 				}
 			}
 		}
-		.search-box{
-			border-top:2rpx solid #9999992e;
+
+		.search-box {
+			border-top: 2rpx solid #9999992e;
 			width: 100%;
 			padding: 10rpx 0;
 		}

@@ -1,10 +1,12 @@
 // 引入 uni-ajax 模块
 import ajax from 'uni-ajax'
 import Vue from 'vue'
+import {baseUrl} from '@/common/utils/config.js'
 // 创建请求实例
 const instance = ajax.create({
 	// 初始配置
 	baseURL: 'http://localhost:3000',
+	// baseURL: baseUrl,
 	showLoading: true
 })
 

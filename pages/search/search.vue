@@ -1,7 +1,8 @@
 <template>
 	<view class="search-page">
 		<view class="search-box">
-			<u-search placeholder="搜索" v-model="searchVal" :show-action="false"></u-search>
+			<uni-search-bar placeholder="搜索" bgColor="#fff" v-model="searchVal"  :radius="20">
+			</uni-search-bar>
 		</view>
 
 		<view class="list-box">
@@ -77,12 +78,9 @@
 		bottom: 0;
 		left: 0;
 		overflow: auto;
-		padding: 20rpx;
+		padding:0 20rpx;
 		background: #F4F6F9;
 
-		.search-box {
-			margin-bottom: 20rpx;
-		}
 
 		.list-box {
 			width: 100%;
@@ -101,7 +99,7 @@
 				border-radius: 50rpx;
 				margin: 0 20rpx 10rpx;
 				padding:12rpx  16rpx;
-				font-size: 20rpx;
+				font-size: 22rpx;
 				color: #333333;
 				background: #fff;
 				// border: 2rpx solid #ADADAD;
